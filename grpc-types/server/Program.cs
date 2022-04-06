@@ -13,7 +13,7 @@ try
 {
     server = new Server()
     {
-        Services = { GreetingSerivce.BindService(new GreetingServiceImpl())},
+        Services = { GreetingService.BindService(new GreetingServiceImpl()) },
         Ports = { new ServerPort("localhost", _port, ServerCredentials.Insecure) }
     };
 

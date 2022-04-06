@@ -16,7 +16,7 @@ channel.ConnectAsync().ContinueWith((task) =>
 
 //var client = new DummyService.DummyServiceClient(channel);
 
-var client = new GreetingSerivce.GreetingSerivceClient(channel);
+var client = new GreetingService.GreetingServiceClient(channel);
 
 var greeting = new Greeting()
 {
@@ -24,14 +24,25 @@ var greeting = new Greeting()
     LastName = "Oliveira"
 };
 
-var request = new GreetingRequest()
+//unary request
+//var request = new GreetingRequest()
+//{
+//    Greeting = greeting
+//};
+
+//var response = client.Greet(request);
+
+//Console.WriteLine(response.Result);
+
+//server stream
+var request = new GreetingManyTimesRequest() { Greeting = greeting };
+var response = client.GreetManyTimes(request);
+
+while (await response.ResponseStream.MoveNext())
 {
-    Greeting = greeting
-};
-
-var response = client.Greet(request);
-
-Console.WriteLine(response.Result);
+    Console.WriteLine(response.ResponseStream.Current.Result);
+    await Task.Delay(200);
+}
 
 channel.ShutdownAsync().Wait();
 
