@@ -24,7 +24,7 @@ var greeting = new Greeting()
     LastName = "Oliveira"
 };
 
-//unary request
+#region unary request
 //var request = new GreetingRequest()
 //{
 //    Greeting = greeting
@@ -33,16 +33,35 @@ var greeting = new Greeting()
 //var response = client.Greet(request);
 
 //Console.WriteLine(response.Result);
+#endregion
 
-//server stream
-var request = new GreetingManyTimesRequest() { Greeting = greeting };
-var response = client.GreetManyTimes(request);
+#region server stream
+//var request = new GreetingManyTimesRequest() { Greeting = greeting };
+//var response = client.GreetManyTimes(request);
 
-while (await response.ResponseStream.MoveNext())
+//while (await response.ResponseStream.MoveNext())
+//{
+//    Console.WriteLine(response.ResponseStream.Current.Result);
+//    await Task.Delay(200);
+//}
+#endregion
+
+#region client stream
+var request = new LongGreetingRequest() { Greeting = greeting };
+var stream = client.LongGreet();
+
+foreach (var item in Enumerable.Range(1, 10))
 {
-    Console.WriteLine(response.ResponseStream.Current.Result);
-    await Task.Delay(200);
+    await stream.RequestStream.WriteAsync(request);
 }
+
+await stream.RequestStream.CompleteAsync();
+
+var response = await stream.ResponseAsync;
+
+Console.WriteLine(response.Result);
+#endregion
+
 
 channel.ShutdownAsync().Wait();
 
