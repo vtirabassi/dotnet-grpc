@@ -1,8 +1,5 @@
-﻿using Grpc.Core;
-using Dummy;
-using System.Threading.Tasks;
-using System;
-using Greet;
+﻿using Greet;
+using Grpc.Core;
 
 const string _target = "127.0.0.1:50051";
 
@@ -47,22 +44,54 @@ var greeting = new Greeting()
 #endregion
 
 #region client stream
-var request = new LongGreetingRequest() { Greeting = greeting };
-var stream = client.LongGreet();
+//var request = new LongGreetingRequest() { Greeting = greeting };
+//var stream = client.LongGreet();
 
-foreach (var item in Enumerable.Range(1, 10))
-{
-    await stream.RequestStream.WriteAsync(request);
-}
+//foreach (var item in Enumerable.Range(1, 10))
+//{
+//    await stream.RequestStream.WriteAsync(request);
+//}
 
-await stream.RequestStream.CompleteAsync();
+//await stream.RequestStream.CompleteAsync();
 
-var response = await stream.ResponseAsync;
+//var response = await stream.ResponseAsync;
 
-Console.WriteLine(response.Result);
+//Console.WriteLine(response.Result);
 #endregion
+
+await CreateGreetEveryone(client);
+
 
 
 channel.ShutdownAsync().Wait();
 
 Console.ReadKey();
+
+static async Task CreateGreetEveryone(GreetingService.GreetingServiceClient client)
+{
+    var stream = client.GreetEveryone();
+
+    var responseTask = Task.Run(async () =>
+    {
+        while (await stream.ResponseStream.MoveNext())
+        {
+            Console.WriteLine("Received: " + stream.ResponseStream.Current.Result);
+        }
+    });
+
+    Greeting[] greetings =
+    {
+        new Greeting() { FirstName = "Angelo", LastName = "XXX" },
+        new Greeting() { FirstName = "Lorena", LastName = "XXX" },
+        new Greeting() { FirstName = "Rodrigo", LastName = "XXX" }
+    };
+
+    foreach (var greeting in greetings)
+    {
+        Console.WriteLine("Sending request: " + greeting.ToString());
+        await stream.RequestStream.WriteAsync(new GreetEveryoneRequest() { Greeting = greeting });
+    }
+
+    await stream.RequestStream.CompleteAsync();
+    await responseTask;
+}
