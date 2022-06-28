@@ -8,26 +8,37 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <None Remove="Grpc"/>
-        <None Remove="Grpc.Tools"/>
-        <None Remove="Google.Protobuf"/>
-        <None Remove="models\"/>
-        <None Remove="Grpc.Core"/>
+        <None Remove="Grpc" />
+        <None Remove="Grpc.Tools" />
+        <None Remove="Google.Protobuf" />
+        <None Remove="models\" />
+        <None Remove="Grpc.Core" />
     </ItemGroup>
     <ItemGroup>
-        <Protobuf Include="../*.proto" OutputDir="%(RelativePath)models/"/>
+        <Protobuf Include="../*.proto" OutputDir="%(RelativePath)models/" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Grpc" Version="2.45.0"/>
+        <PackageReference Include="Grpc" Version="2.45.0" />
         <PackageReference Include="Grpc.Tools" Version="2.45.0">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="Google.Protobuf" Version="3.19.4"/>
-        <PackageReference Include="Grpc.Core" Version="2.45.0"/>
-        <PackageReference Include="Contrib.Grpc.Core.M1" Version="2.39.1"/>
+        <PackageReference Include="Google.Protobuf" Version="3.19.4" />
+        <PackageReference Include="Grpc.Core" Version="2.45.0" />
+        <PackageReference Include="Contrib.Grpc.Core.M1" Version="2.39.1" />
     </ItemGroup>
     <ItemGroup>
-        <Folder Include="models\"/>
+        <Folder Include="models\" />
+    </ItemGroup>
+    <ItemGroup>
+      <EmbeddedResource Include="ssl\ca.crt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="ssl\client.crt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="ssl\client.key">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
     </ItemGroup>
 </Project>

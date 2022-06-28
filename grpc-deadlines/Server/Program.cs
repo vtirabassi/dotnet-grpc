@@ -8,10 +8,20 @@ const int Port = 50051;
 
 try
 {
+    var keypair = new KeyCertificatePair(
+        File.ReadAllText("ssl/server.crt"),
+        File.ReadAllText("ssl/server.key"));
+    
+    var cacert = File.ReadAllText("ssl/ca.crt");
+    var credentials = new SslServerCredentials(new List<KeyCertificatePair>()
+    {
+        keypair
+    }, cacert, true);
+    
     server = new Grpc.Core.Server()
     {
         Services = { GreetingService.BindService(new GreetingServiceImpl()) },
-        Ports = { new ServerPort("localhost", Port, ServerCredentials.Insecure) }
+        Ports = { new ServerPort("localhost", Port, credentials) }
     };
 
     server.Start();

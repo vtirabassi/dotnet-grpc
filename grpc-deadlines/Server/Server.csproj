@@ -29,6 +29,21 @@
     </ItemGroup>
     <ItemGroup>
         <Folder Include="models\" />
+        <Folder Include="ssl" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Remove="ssl\ca.crt" />
+      <EmbeddedResource Include="ssl\ca.crt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <None Remove="ssl\server.crt" />
+      <EmbeddedResource Include="ssl\server.crt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <None Remove="ssl\server.key" />
+      <EmbeddedResource Include="ssl\server.key">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
     </ItemGroup>
 
 </Project>
