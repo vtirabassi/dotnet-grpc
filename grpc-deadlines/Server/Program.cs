@@ -1,5 +1,7 @@
 ﻿using Greeting;
 using Grpc.Core;
+using Grpc.Reflection;
+using Grpc.Reflection.V1Alpha;
 using Server;
 
 Grpc.Core.Server server = null;
@@ -13,6 +15,9 @@ try
         File.ReadAllText("ssl/server.key"));
     
     var cacert = File.ReadAllText("ssl/ca.crt");
+
+    var reflectionImpl = new ReflectionServiceImpl(GreetingService.Descriptor, ServerReflection.Descriptor);
+    
     var credentials = new SslServerCredentials(new List<KeyCertificatePair>()
     {
         keypair
@@ -20,8 +25,12 @@ try
     
     server = new Grpc.Core.Server()
     {
-        Services = { GreetingService.BindService(new GreetingServiceImpl()) },
-        Ports = { new ServerPort("localhost", Port, credentials) }
+        Services =
+        {
+            GreetingService.BindService(new GreetingServiceImpl()),
+            ServerReflection.BindService(reflectionImpl) 
+        },
+        Ports = { new ServerPort("localhost", Port, ServerCredentials.Insecure) }
     };
 
     server.Start();
